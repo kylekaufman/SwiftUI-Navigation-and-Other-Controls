@@ -47,6 +47,20 @@ struct ProfileView: View {
                             .padding(.horizontal)
                     }
                 }
+                
+                // Save Button
+                Button(action: {
+                    saveProfile()
+                }) {
+                    Text("Save")
+                        .font(.headline)
+                        .padding()
+                        .frame(maxWidth: .infinity)
+                        .background(Color.black)
+                        .foregroundColor(.white)
+                        .cornerRadius(10)
+                        .padding(.horizontal)
+                }
                 Spacer()
             }
             .alert(isPresented: $showingAlert) {
@@ -59,7 +73,7 @@ struct ProfileView: View {
         if profile.firstName.isEmpty || profile.lastName.isEmpty {
             showingAlert = true
         } else {
-            onSave(profile)
+            onSave(profile) // Call the onSave closure to save the contact
         }
     }
 }

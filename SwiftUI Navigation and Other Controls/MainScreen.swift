@@ -16,11 +16,14 @@ struct Contact: Identifiable, Hashable, Codable {
 
 struct MainScreen: View {
     @State private var contacts: [Contact] = [
-          Contact(firstName: "John", lastName: "Doe", favorite: true),
-          Contact(firstName: "Jane", lastName: "Smith", favorite: true),
-          Contact(firstName: "Sam", lastName: "Brown", favorite: false)
-      ]
+        Contact(firstName: "Emmanuel", lastName: "Makoye", favorite: true),
+        Contact(firstName: "Jane", lastName: "Smith", favorite: true),
+        Contact(firstName: "Sam", lastName: "Brown", favorite: false)
+    ]
     
+    @State private var isAddingNewContact = false
+    @State private var newContact = Contact(firstName: "", lastName: "", favorite: false)
+
     var body: some View {
         NavigationStack {
             VStack {
@@ -31,7 +34,8 @@ struct MainScreen: View {
                         .bold()
                     Spacer()
                     Button(action: {
-                        print("adding new contact")
+                        newContact = Contact(firstName: "", lastName: "", favorite: false) // Reset new contact
+                        isAddingNewContact = true
                     }) {
                         Image(systemName: "plus")
                             .resizable()
@@ -52,12 +56,16 @@ struct MainScreen: View {
                 }
                 .listStyle(PlainListStyle())
             }
+            .navigationDestination(isPresented: $isAddingNewContact) {
+                ProfileView(profile: $newContact) { updatedContact in
+                    contacts.append(updatedContact) // Add new contact when saved
+                    isAddingNewContact = false // Dismiss the screen
+                }
+            }
         }
     }
 }
 
-
 #Preview {
     MainScreen()
 }
-

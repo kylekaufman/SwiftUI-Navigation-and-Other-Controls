@@ -39,7 +39,7 @@ struct ContactRow: View {
         .background(
             NavigationLink(
                 "",
-                destination: ProfileView(profile: $contact, onSave: onSave)
+                destination: MessageScreen(contact: $contact, onSave: onSave)
             )
             .opacity(0) // Invisible NavigationLink
         )

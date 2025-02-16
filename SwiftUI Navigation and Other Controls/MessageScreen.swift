@@ -1,8 +1,8 @@
+
+//  ContentView.swift
+//  Intro to Swift UI
 //
-//  MessageScreen.swift
-//  SwiftUI Navigation and Other Controls
-//
-//  Created by Emmanuel Makoye on 2/16/25.
+//  Created by Kyle Kaufman and Emmanuel Makoye on 1/23/25.
 //
 
 import SwiftUI
@@ -66,33 +66,76 @@ struct MessageView: View {
 struct MessageScreen: View {
     @State var messages = [Message]()
     @State var message = ""
+    @Binding var contact: Contact
+    @State private var navigateToProfile = false  // State variable to trigger navigation
+    var onSave: (Contact) -> Void
+
     var body: some View {
-        VStack {
-            ScrollView {
-                Section {
+        NavigationStack {
+            VStack {
+                Button(action: {
+                    navigateToProfile = true  // Set navigation trigger to true
+                }) {
+                    HStack(spacing: 15) {
+                        Image(systemName: "person.crop.circle.fill")
+                            .resizable()
+                            .scaledToFit()
+                            .frame(width: 50, height: 50)
+                            .foregroundColor(.gray)
+                            .padding(8)
+                            .background(Color.white)
+                            .clipShape(Circle())
+                            .shadow(radius: 4)
+
+                        VStack(alignment: .leading, spacing: 4) {
+                            Text("\(contact.firstName) \(contact.lastName)")
+                                .font(.title2)
+                                .fontWeight(.semibold)
+                                .foregroundColor(.black)
+                        }
+                        Spacer()
+                    }
+                    .padding()
+                }
+                .buttonStyle(PlainButtonStyle())
+
+                Divider()
+                
+                ScrollView {
                     ForEach(messages) { msg in
                         MessageView(message: msg)
                     }
                     .padding(.vertical, 5)
                 }
-            }
-            .refreshable {
-                messages.removeAll()
-            }
-            HStack {
-                TextField("Message", text: $message)
-                Button(action: {
-                    messages.append(Message(message: message))
-                    message = ""
-                }) {
-                    Image(systemName: "paperplane")
+                
+                HStack {
+                    TextField("Message", text: $message)
+                    Button(action: {
+                        messages.append(Message(message: message))
+                        message = ""
+                    }) {
+                        Image(systemName: "paperplane")
+                    }
                 }
             }
+            .padding()
+            .navigationDestination(isPresented: $navigateToProfile) {
+                ProfileView(profile: $contact, onSave: onSave)
+            }
         }
-        .padding()
+    }
+}
+struct   MessageScreenPreview: View {
+    @State private var contact = Contact(firstName: "Emmanuel", lastName: "Makoye", favorite: false)
+
+    var body: some View {
+        MessageScreen(messages: [], message: "", contact: $contact, onSave: { updatedContact in
+            contact = updatedContact // Ensure state updates in preview
+        })
     }
 }
 
+
 #Preview {
-    MessageScreen()
+    MessageScreenPreview()
 }
