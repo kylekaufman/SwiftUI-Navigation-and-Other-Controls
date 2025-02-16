@@ -19,6 +19,7 @@ struct LoginScreen: View {
                         .padding()
                         .border(Color.black, width: 2)
                         .padding(.horizontal, 20)
+                        .autocapitalization(.none)
                 }
                 .padding(.bottom, 10)
                 HStack {
@@ -26,6 +27,7 @@ struct LoginScreen: View {
                         .padding()
                         .border(Color.black, width: 2)
                         .padding(.horizontal, 20)
+                        .autocapitalization(.none)
                 }
                 .padding(.bottom, 30)
                 Button(action: {

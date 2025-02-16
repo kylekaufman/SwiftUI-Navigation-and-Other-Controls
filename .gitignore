@@ -1,0 +1,5 @@
+# Ignore Xcode user-specific files
+*.xcuserstate
+*.plist
+*.xcuserdata/
+
