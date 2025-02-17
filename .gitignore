@@ -3,3 +3,5 @@
 *.plist
 *.xcuserdata/
 
+ SwiftUI Navigation and Other Controls.xcodeproj/project.pbxproj
+*.pbxproj

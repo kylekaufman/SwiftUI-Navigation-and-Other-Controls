@@ -9,6 +9,7 @@ import SwiftUI
 
 struct ContactRow: View {
     @Binding var contact: Contact
+    @Binding var contacts: [Contact]
     var onSave: (Contact) -> Void  // Add onSave closure
     
     var body: some View {
@@ -39,7 +40,7 @@ struct ContactRow: View {
         .background(
             NavigationLink(
                 "",
-                destination: MessageScreen(contact: $contact, onSave: onSave)
+                destination: MessageScreen(contact: $contact, contacts:$contacts, onSave: onSave)
             )
             .opacity(0) // Invisible NavigationLink
         )
@@ -47,9 +48,10 @@ struct ContactRow: View {
 }
 struct ContactRowPreview: View {
     @State private var contact = Contact(firstName: "Emmanuel", lastName: "Makoye", favorite: false)
+    @State private var contacts: [Contact] = []
 
     var body: some View {
-        ContactRow(contact: $contact, onSave: { updatedContact in
+        ContactRow(contact: $contact, contacts: $contacts, onSave: { updatedContact in
             contact = updatedContact // Ensure state updates in preview
         })
     }

@@ -15,14 +15,15 @@ struct Contact: Identifiable, Hashable, Codable {
 }
 
 struct MainScreen: View {
-    @State private var contacts: [Contact] = [
-        Contact(firstName: "Emmanuel", lastName: "Makoye", favorite: true),
-        Contact(firstName: "Jane", lastName: "Smith", favorite: true),
-        Contact(firstName: "Sam", lastName: "Brown", favorite: false)
-    ]
+    @State private var contacts: [Contact] = []
     
     @State private var isAddingNewContact = false
     @State private var newContact = Contact(firstName: "", lastName: "", favorite: false)
+    
+    private func deleteContact(at offsets: IndexSet) {
+        contacts.remove(atOffsets: offsets)
+        ContactModel.save(contacts)
+    }
 
     var body: some View {
         NavigationStack {
@@ -49,19 +50,21 @@ struct MainScreen: View {
                 // Contacts List
                 List {
                     ForEach(contacts.indices, id: \.self) { index in
-                        ContactRow(contact: $contacts[index], onSave: { updatedContact in
+                        ContactRow(contact: $contacts[index], contacts: $contacts, onSave: { updatedContact in
                             contacts[index] = updatedContact
                         })
-                    }
+                    } .onDelete(perform: deleteContact)
                 }
                 .listStyle(PlainListStyle())
             }
             .navigationDestination(isPresented: $isAddingNewContact) {
-                ProfileView(profile: $newContact) { updatedContact in
+                ProfileView(profile: $newContact, contacts: $contacts) { updatedContact in
                     contacts.append(updatedContact) // Add new contact when saved
                     isAddingNewContact = false // Dismiss the screen
                 }
             }
+        }.onAppear {
+            contacts =  ContactModel.load()
         }
     }
 }

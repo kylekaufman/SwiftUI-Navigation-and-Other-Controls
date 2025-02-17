@@ -67,6 +67,7 @@ struct MessageScreen: View {
     @State var messages = [Message]()
     @State var message = ""
     @Binding var contact: Contact
+    @Binding var contacts: [Contact]
     @State private var navigateToProfile = false  // State variable to trigger navigation
     var onSave: (Contact) -> Void
 
@@ -120,16 +121,17 @@ struct MessageScreen: View {
             }
             .padding()
             .navigationDestination(isPresented: $navigateToProfile) {
-                ProfileView(profile: $contact, onSave: onSave)
+                ProfileView(profile: $contact, contacts: $contacts, onSave: onSave)
             }
         }
     }
 }
 struct   MessageScreenPreview: View {
     @State private var contact = Contact(firstName: "Emmanuel", lastName: "Makoye", favorite: false)
+    @State private var contacts: [Contact] = []
 
     var body: some View {
-        MessageScreen(messages: [], message: "", contact: $contact, onSave: { updatedContact in
+        MessageScreen(messages: [], message: "", contact: $contact, contacts: $contacts, onSave: { updatedContact in
             contact = updatedContact // Ensure state updates in preview
         })
     }
