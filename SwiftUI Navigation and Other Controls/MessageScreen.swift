@@ -7,7 +7,7 @@
 
 import SwiftUI
 
-struct Message: Identifiable {
+struct Message: Identifiable, Codable, Equatable, Hashable {
     var id: UUID
     var message: String
     var date: Date
@@ -78,23 +78,7 @@ struct MessageScreen: View {
                     navigateToProfile = true  // Set navigation trigger to true
                 }) {
                     HStack(spacing: 15) {
-                        Image(systemName: "person.crop.circle.fill")
-                            .resizable()
-                            .scaledToFit()
-                            .frame(width: 50, height: 50)
-                            .foregroundColor(.gray)
-                            .padding(8)
-                            .background(Color.white)
-                            .clipShape(Circle())
-                            .shadow(radius: 4)
-
-                        VStack(alignment: .leading, spacing: 4) {
-                            Text("\(contact.firstName) \(contact.lastName)")
-                                .font(.title2)
-                                .fontWeight(.semibold)
-                                .foregroundColor(.black)
-                        }
-                        Spacer()
+                        ContactRow(contact: $contact, contacts: $contacts, onSave:onSave, isFavorive: false)
                     }
                     .padding()
                 }
@@ -113,11 +97,16 @@ struct MessageScreen: View {
                     TextField("Message", text: $message)
                     Button(action: {
                         messages.append(Message(message: message))
+                        contact.addMessage(Message(message: message))
+                        ContactModel.save(contacts)
                         message = ""
                     }) {
                         Image(systemName: "paperplane")
                     }
                 }
+            }
+            .onAppear{
+                messages = contact.messages
             }
             .padding()
             .navigationDestination(isPresented: $navigateToProfile) {

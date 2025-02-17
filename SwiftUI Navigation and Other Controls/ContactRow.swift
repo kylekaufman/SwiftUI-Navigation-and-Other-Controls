@@ -11,6 +11,7 @@ struct ContactRow: View {
     @Binding var contact: Contact
     @Binding var contacts: [Contact]
     var onSave: (Contact) -> Void  // Add onSave closure
+    @State var isFavorive: Bool = true
     
     var body: some View {
         HStack {
@@ -31,9 +32,12 @@ struct ContactRow: View {
             }
             
             Spacer()
-                Image(systemName: contact.favorite ? "star.fill" : "star")
-                    .foregroundColor(contact.favorite ? .black : .gray)
+            if isFavorive, contact.favorite {
+                Image(systemName: "star.fill")
+                    .foregroundColor(.black)
                     .font(.title2)
+            }
+                
         }
         .padding(.vertical, 8)
         .contentShape(Rectangle()) // Makes tapping work properly
@@ -47,13 +51,13 @@ struct ContactRow: View {
     }
 }
 struct ContactRowPreview: View {
-    @State private var contact = Contact(firstName: "Emmanuel", lastName: "Makoye", favorite: false)
+    @State private var contact = Contact(firstName: "Emmanuel", lastName: "Makoye", favorite: true)
     @State private var contacts: [Contact] = []
 
     var body: some View {
         ContactRow(contact: $contact, contacts: $contacts, onSave: { updatedContact in
             contact = updatedContact // Ensure state updates in preview
-        })
+        }, isFavorive: true)
     }
 }
 

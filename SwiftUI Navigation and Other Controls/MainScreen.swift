@@ -12,6 +12,11 @@ struct Contact: Identifiable, Hashable, Codable {
     var firstName: String
     var lastName: String
     var favorite: Bool
+    var messages: [Message] = []
+    
+    mutating func addMessage(_ message: Message) {
+        messages.append(message)
+    }
 }
 
 struct MainScreen: View {
@@ -19,10 +24,26 @@ struct MainScreen: View {
     
     @State private var isAddingNewContact = false
     @State private var newContact = Contact(firstName: "", lastName: "", favorite: false)
+    @State private var showSheet: Bool = false
     
     private func deleteContact(at offsets: IndexSet) {
         contacts.remove(atOffsets: offsets)
         ContactModel.save(contacts)
+    }
+    
+    // Default contacts
+    private var defaultContacts: [Contact] = [
+        Contact(firstName: "John", lastName: "Doe", favorite: true),
+        Contact(firstName: "Jane", lastName: "Smith", favorite: true),
+        Contact(firstName: "Sam", lastName: "Brown", favorite: false)
+    ]
+    
+    func addDefaultContactsIfNeeded() {
+        // If contacts list is empty, load the default contacts and save them
+        if contacts.isEmpty {
+            contacts = defaultContacts
+            ContactModel.save(contacts)
+        }
     }
 
     var body: some View {
@@ -36,7 +57,7 @@ struct MainScreen: View {
                     Spacer()
                     Button(action: {
                         newContact = Contact(firstName: "", lastName: "", favorite: false) // Reset new contact
-                        isAddingNewContact = true
+                        showSheet = true
                     }) {
                         Image(systemName: "plus")
                             .resizable()
@@ -52,19 +73,29 @@ struct MainScreen: View {
                     ForEach(contacts.indices, id: \.self) { index in
                         ContactRow(contact: $contacts[index], contacts: $contacts, onSave: { updatedContact in
                             contacts[index] = updatedContact
+                            ContactModel.save(contacts) // Save after modification
                         })
-                    } .onDelete(perform: deleteContact)
+                    }
+                    .onDelete(perform: deleteContact)
                 }
                 .listStyle(PlainListStyle())
             }
-            .navigationDestination(isPresented: $isAddingNewContact) {
+            // Sheet for Profile View
+            .sheet(isPresented: $showSheet, onDismiss: {
+                ContactModel.save(contacts)
+            }, content: {
                 ProfileView(profile: $newContact, contacts: $contacts) { updatedContact in
                     contacts.append(updatedContact) // Add new contact when saved
-                    isAddingNewContact = false // Dismiss the screen
+                    showSheet = false // Dismiss the sheet
                 }
-            }
-        }.onAppear {
-            contacts =  ContactModel.load()
+            })
+        }
+        .onAppear {
+            // Load the contacts from file
+            contacts = ContactModel.load()
+            
+            // Ensure default contacts are added if file is empty
+            addDefaultContactsIfNeeded()
         }
     }
 }
