@@ -7,7 +7,7 @@ struct LoginScreen: View {
     @State var loginFailed = false
 
     var body: some View {
-        NavigationView {
+        NavigationStack {
             VStack {
                 Spacer()
                 Text("Sign In")
