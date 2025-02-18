@@ -13,6 +13,7 @@ struct Contact: Identifiable, Hashable, Codable {
     var lastName: String
     var favorite: Bool
     var messages: [Message] = []
+    var profileImageName: String?
     
     mutating func addMessage(_ message: Message) {
         messages.append(message)
@@ -33,8 +34,8 @@ struct MainScreen: View {
     
     // Default contacts
     private var defaultContacts: [Contact] = [
-        Contact(firstName: "John", lastName: "Doe", favorite: true),
-        Contact(firstName: "Jane", lastName: "Smith", favorite: true),
+        Contact(firstName: "John", lastName: "Doe", favorite: true, profileImageName: "johndoe"),
+        Contact(firstName: "Jane", lastName: "Smith", favorite: true, profileImageName: "janesmith"),
         Contact(firstName: "Sam", lastName: "Brown", favorite: false)
     ]
     

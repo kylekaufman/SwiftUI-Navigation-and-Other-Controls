@@ -16,11 +16,18 @@ struct ContactRow: View {
     var body: some View {
         HStack {
             // Profile Image
-            Image(systemName: "person.crop.circle.fill")
-                .resizable()
-                .scaledToFit()
-                .frame(width: 50, height: 50)
-                .foregroundColor(.gray)
+            if let imageName = contact.profileImageName, !imageName.isEmpty {
+                Image(imageName)
+                    .resizable()
+                    .scaledToFit()
+                    .frame(width: 50, height: 50)
+            } else {
+                Image(systemName: "person.crop.circle.fill")
+                    .resizable()
+                    .scaledToFit()
+                    .frame(width: 50, height: 50)
+                    .foregroundColor(.gray)
+            }
 
             // Contact Details
             VStack(alignment: .leading) {

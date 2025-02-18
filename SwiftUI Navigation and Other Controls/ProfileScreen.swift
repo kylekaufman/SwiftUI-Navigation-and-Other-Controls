@@ -18,12 +18,20 @@ struct ProfileView: View {
         NavigationStack {
             VStack {
                 // Profile Image
-                Image(systemName: "person.circle.fill")
-                    .resizable()
-                    .scaledToFit()
-                    .frame(width: 150, height: 150)
-                    .foregroundColor(.gray)
-                    .padding(.top, 40)
+                if let imageName = profile.profileImageName, !imageName.isEmpty {
+                    Image(imageName)
+                        .resizable()
+                        .scaledToFit()
+                        .frame(width: 150, height: 150)
+                        .padding(.top, 40)
+                } else {
+                    Image(systemName: "person.circle.fill")
+                        .resizable()
+                        .scaledToFit()
+                        .frame(width: 150, height: 150)
+                        .foregroundColor(.gray)
+                        .padding(.top, 40)
+                }
                 
                 // Editable Fields
                 VStack(spacing: 20) {
